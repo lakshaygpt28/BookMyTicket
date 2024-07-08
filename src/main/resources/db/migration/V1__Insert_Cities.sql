@@ -1,0 +1,24 @@
+--CREATE TABLE IF NOT EXISTS city (
+--    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--    name VARCHAR(255) NOT NULL
+--);
+--
+--CREATE TABLE IF NOT EXISTS theatre (
+--    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--    name VARCHAR(255) NOT NULL,
+--    city_id BIGINT,
+--    FOREIGN KEY (city_id) REFERENCES city(id)
+--);
+
+--INSERT INTO city (name) VALUES ('Hyderabad');
+--INSERT INTO city (name) VALUES ('Bengaluru');
+--
+--INSERT INTO theatre (name, city_id)
+--SELECT 'AMB Cinemas', id
+--FROM city
+--WHERE name = 'Hyderabad';
+--
+--INSERT INTO theatre (name, city_id)
+--SELECT 'PVR Cinemas', id
+--FROM city
+--WHERE name = 'Bengaluru';

@@ -51,12 +51,6 @@ public class TheatreService {
         return savedTheatre;
     }
 
-    public void deleteTheatre(Long id) {
-        LOG.info("Deleting theatre with id: {}", id);
-        theatreRepository.deleteById(id);
-        LOG.info("Theatre with id {} deleted successfully", id);
-    }
-
     public Optional<Theatre> getTheatreById(Long id) {
         LOG.info("Fetching theatre with id: {}", id);
         Optional<Theatre> theatre = theatreRepository.findById(id);

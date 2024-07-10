@@ -40,9 +40,9 @@ public class ShowSeatService {
     }
 
     public void saveShowSeats(List<ShowSeat> showSeats) {
-        LOG.info("Request to save show seats: {}", showSeats);
+        LOG.info("Request to save {} show seats", showSeats.size());
         showSeatRepository.saveAll(showSeats);
-        LOG.info("Successfully saved show seats: {}", showSeats);
+        LOG.info("Successfully saved {} show seats", showSeats.size());
     }
     
     public void createShowSeats(List<Show> shows) {

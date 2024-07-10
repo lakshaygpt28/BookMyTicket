@@ -20,9 +20,10 @@ public class SeatController {
         this.seatService = seatService;
     }
 
+    @PostMapping("/seats")
     public ResponseEntity<Seat> addSeat(@RequestBody @Valid Seat seat) {
-        seatService.addSeat(seat);
-        return ResponseEntity.ok(seat);
+        Seat savedSeat = seatService.addSeat(seat);
+        return ResponseEntity.ok(savedSeat);
     }
 
     @GetMapping("screens/{screenId}/seats")

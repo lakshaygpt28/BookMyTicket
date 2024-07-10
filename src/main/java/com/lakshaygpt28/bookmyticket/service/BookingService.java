@@ -108,9 +108,9 @@ public class BookingService {
     }
 
     public List<Booking> getUnpaidBookings(LocalDateTime expirationTime) {
-        LOG.info("Fetching unpaid bookings");
+        LOG.info("Fetching unpaid bookings with expiration time: {}", expirationTime);
         List<Booking> unpaidBookings = bookingRepository.getUnpaidBookings(BookingStatus.RESERVED, expirationTime);
-        LOG.info("Unpaid bookings fetched successfully");
+        LOG.info("{} Unpaid bookings fetched successfully", unpaidBookings.size());
         return unpaidBookings;
     }
 

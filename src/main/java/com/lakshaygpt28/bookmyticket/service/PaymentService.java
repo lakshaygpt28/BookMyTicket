@@ -2,7 +2,6 @@ package com.lakshaygpt28.bookmyticket.service;
 
 import com.lakshaygpt28.bookmyticket.model.Booking;
 import com.lakshaygpt28.bookmyticket.request.PaymentRequest;
-import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

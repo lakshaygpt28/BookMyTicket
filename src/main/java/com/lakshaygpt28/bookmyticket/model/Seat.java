@@ -18,6 +18,4 @@ public class Seat {
     @JoinColumn(name = "screen_id", nullable = false)
     @JsonIgnoreProperties("seats")
     private Screen screen;
-
-    private boolean isAvailable = true;
 }

@@ -6,6 +6,7 @@ import com.lakshaygpt28.bookmyticket.request.BookingRequest;
 import com.lakshaygpt28.bookmyticket.service.BookingService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class BookingController {
         Long showId = bookingRequest.getShowId();
         List<Long> seatIds = bookingRequest.getSeatIds();
         Booking savedBooking = bookingService.createBooking(userId, showId, seatIds);
-        return ResponseEntity.ok(savedBooking);
+        return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
     }
 
     @GetMapping("/bookings/{id}")

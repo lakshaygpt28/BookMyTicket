@@ -18,11 +18,13 @@ public class ShowService {
 
     private final ShowRepository showRepository;
     private final ScreenService screenService;
+    private final ShowSeatService showSeatService;
 
     @Autowired
-    public ShowService(ShowRepository showRepository, ScreenService screenService) {
+    public ShowService(ShowRepository showRepository, ScreenService screenService, ShowSeatService showSeatService) {
         this.showRepository = showRepository;
         this.screenService = screenService;
+        this.showSeatService = showSeatService;
     }
 
     public Optional<Show> getShowById(Long id) {
@@ -40,6 +42,7 @@ public class ShowService {
     public List<Show> addShows(List<Show> newShows) {
         LOG.info("Adding {} shows", newShows.size());
         List<Show> savedShows = showRepository.saveAll(newShows);
+        showSeatService.createShowSeats(savedShows);
         LOG.info("{} shows added successfully", savedShows.size());
         return savedShows;
     }

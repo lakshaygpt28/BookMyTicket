@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,19 +28,18 @@ public class Booking {
     @JoinColumn(name = "show_id", nullable = false)
     private Show show;
 
-    @ManyToMany
-    @JoinTable(
-            name = "booking_seat",
-            joinColumns = @JoinColumn(name = "booking_id"),
-            inverseJoinColumns = @JoinColumn(name = "seat_id")
-    )
-    private List<Seat> seats;
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ShowSeat> showSeats;
     private LocalDateTime bookingTime;
+    private BookingStatus bookingStatus;
+    private BigDecimal totalAmount;
 
-    public Booking(User user, Show show, List<Seat> seats, LocalDateTime bookingTime) {
+    public Booking(User user, Show show, List<ShowSeat> showSeats, BigDecimal totalAmount) {
         this.user = user;
         this.show = show;
-        this.seats = seats;
-        this.bookingTime = bookingTime;
+        this.showSeats = showSeats;
+        this.bookingTime = LocalDateTime.now();
+        this.bookingStatus = BookingStatus.RESERVED;
+        this.totalAmount = totalAmount;
     }
 }

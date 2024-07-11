@@ -4,6 +4,7 @@ import com.lakshaygpt28.bookmyticket.model.Booking;
 import com.lakshaygpt28.bookmyticket.model.Seat;
 import com.lakshaygpt28.bookmyticket.request.BookingRequest;
 import com.lakshaygpt28.bookmyticket.service.BookingService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@Tag(name = "Booking Controller", description = "APIs for managing bookings")
 public class BookingController {
     private final BookingService bookingService;
 
@@ -24,6 +26,7 @@ public class BookingController {
 
 
     @PostMapping("/bookings")
+
     public ResponseEntity<Booking> createBooking(@RequestBody @Valid BookingRequest bookingRequest) {
         Long userId = bookingRequest.getUserId();
         Long showId = bookingRequest.getShowId();

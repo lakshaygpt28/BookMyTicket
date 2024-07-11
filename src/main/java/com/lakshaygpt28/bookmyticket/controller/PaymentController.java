@@ -28,7 +28,7 @@ public class PaymentController {
         Boolean paymentSuccessful = paymentService.processPayment(paymentRequest);
         Long bookingId = paymentRequest.getBookingId();
         if (paymentSuccessful) {
-            ResponseEntity.ok("Payment processed successfully. Tickets are booked for booking id: " + bookingId);
+            return ResponseEntity.ok("Payment processed successfully. Tickets are booked for booking id: " + bookingId);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment failed booking id: " + bookingId);
     }

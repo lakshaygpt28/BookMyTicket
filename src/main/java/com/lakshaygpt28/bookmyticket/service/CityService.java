@@ -1,7 +1,9 @@
 package com.lakshaygpt28.bookmyticket.service;
 
+import com.lakshaygpt28.bookmyticket.exception.CityNotFoundException;
 import com.lakshaygpt28.bookmyticket.model.City;
 import com.lakshaygpt28.bookmyticket.repository.CityRepository;
+import com.lakshaygpt28.bookmyticket.util.ErrorMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +37,11 @@ public class CityService {
         return cities;
     }
 
-    public Optional<City> getCityById(Long id) {
+    public City getCityById(Long id) {
         LOG.info("Fetching city with id: {}", id);
-        Optional<City> city = cityRepository.findById(id);
-
-        if (city.isPresent()) {
-            LOG.info("City found: {}", city.get().getName());
-        } else {
-            LOG.info("City not found with id: {}", id);
-        }
-
+        City city = cityRepository.findById(id)
+                .orElseThrow(() -> new CityNotFoundException(String.format(ErrorMessages.CITY_NOT_FOUND, id)));
+        LOG.info("City fetched successfully: {}", city.getName());
         return city;
     }
 }

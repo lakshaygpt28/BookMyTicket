@@ -46,7 +46,7 @@ public class ScreenTestData {
         Theatre theatre = new Theatre();
         theatre.setId(1L);
         theatre.setName("PVR Cinemas");
-        // Set other properties as needed
+        theatre.setCity(TestData.getDummyCity());
         return theatre;
     }
 }

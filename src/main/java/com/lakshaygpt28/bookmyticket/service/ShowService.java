@@ -54,9 +54,9 @@ public class ShowService {
         return shows;
     }
 
-    public List<Show> getShowsByTheatreId(Long theatreId) {
+    public List<Show> getShowsByTheatreIdAndCityId(Long cityId, Long theatreId) {
         LOG.info("Fetching shows for theatreId: {}", theatreId);
-        List<Screen> screens = screenService.getScreensByTheatreId(theatreId);
+        List<Screen> screens = screenService.getScreensByTheatreIdAndCityId(cityId, theatreId);
         List<Show> shows = new ArrayList<>();
         for (Screen screen: screens) {
             shows.addAll(showRepository.findByScreenId(screen.getId()));

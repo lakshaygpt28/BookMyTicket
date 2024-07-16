@@ -1,6 +1,7 @@
 package com.lakshaygpt28.bookmyticket.service;
 
 import com.lakshaygpt28.bookmyticket.TestData.*;
+import com.lakshaygpt28.bookmyticket.exception.BookingNotFoundException;
 import com.lakshaygpt28.bookmyticket.model.*;
 import com.lakshaygpt28.bookmyticket.repository.BookingRepository;
 import org.junit.jupiter.api.Test;
@@ -95,10 +96,9 @@ public class BookingServiceTest {
 
         when(bookingRepository.findById(bookingId)).thenReturn(Optional.of(mockBooking));
 
-        Optional<Booking> result = bookingService.getBookingById(bookingId);
+        Booking result = bookingService.getBookingById(bookingId);
 
-        assertTrue(result.isPresent());
-        assertEquals(bookingId, result.get().getId());
+        assertEquals(bookingId, result.getId());
         verify(bookingRepository, times(1)).findById(bookingId);
     }
 
@@ -107,9 +107,8 @@ public class BookingServiceTest {
         Long nonExistingBookingId = 999L;
         when(bookingRepository.findById(nonExistingBookingId)).thenReturn(Optional.empty());
 
-        Optional<Booking> result = bookingService.getBookingById(nonExistingBookingId);
+        assertThrows(BookingNotFoundException.class, () -> bookingService.getBookingById(nonExistingBookingId));
 
-        assertTrue(result.isEmpty());
         verify(bookingRepository, times(1)).findById(nonExistingBookingId);
     }
 

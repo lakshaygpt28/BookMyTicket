@@ -1,5 +1,8 @@
 package com.lakshaygpt28.bookmyticket.controller;
 
+import com.lakshaygpt28.bookmyticket.dto.ShowDTO;
+import com.lakshaygpt28.bookmyticket.dto.response.ApiResponse;
+import com.lakshaygpt28.bookmyticket.mapper.ShowMapper;
 import com.lakshaygpt28.bookmyticket.model.Show;
 import com.lakshaygpt28.bookmyticket.service.ShowService;
 import jakarta.validation.Valid;
@@ -40,9 +43,17 @@ public class ShowController {
         return ResponseEntity.ok(shows);
     }
 
-    @GetMapping("/theatres/{theatreId}/shows")
-    public ResponseEntity<List<Show>> getShowsByTheatreId(@PathVariable Long theatreId) {
-        List<Show> shows = showService.getShowsByTheatreId(theatreId);
-        return ResponseEntity.ok(shows);
+    @GetMapping("/cities/{cityId}/theatres/{theatreId}/shows")
+    public ResponseEntity<ApiResponse<List<ShowDTO>>> getShowsByTheatreId(
+            @PathVariable Long cityId,
+            @PathVariable Long theatreId) {
+        List<Show> shows = showService.getShowsByTheatreIdAndCityId(cityId,theatreId);
+        List<ShowDTO> showDTOs = shows.stream().map(ShowMapper.INSTANCE::toDto).toList();
+        ApiResponse<List<ShowDTO>> response = ApiResponse.<List<ShowDTO>>builder()
+                .success(true)
+                .message("Shows retrieved successfully for theatreId: " + theatreId)
+                .response(showDTOs)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }

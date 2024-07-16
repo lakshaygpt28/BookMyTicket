@@ -45,9 +45,7 @@ public class SeatService {
 
     public List<Seat> addSeatsByScreenId(Long screenId, List<Seat> newSeats) {
         LOG.info("Adding seats for screenId: {}", screenId);
-        Screen screen = screenService.getScreenById(screenId).orElseThrow(
-                () -> new RuntimeException("Screen not found with id: " + screenId)
-        );
+        Screen screen = screenService.getScreenById(screenId);
         newSeats.forEach(seat -> seat.setScreen(screen));
         LOG.info("Adding {} seats for screenId: {}", newSeats.size(), screenId);
         List<Seat> savedSeats = seatRepository.saveAll(newSeats);

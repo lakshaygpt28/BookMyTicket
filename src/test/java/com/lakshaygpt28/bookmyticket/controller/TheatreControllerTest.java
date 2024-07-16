@@ -15,11 +15,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,10 +50,10 @@ public class TheatreControllerTest {
         mockMvc.perform(get("/api/v1/cities/{cityId}/theatres", cityId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Theatre A"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("Theatre B"));
+                .andExpect(jsonPath("$.response[0].id").value(1))
+                .andExpect(jsonPath("$.response[0].name").value("Theatre A"))
+                .andExpect(jsonPath("$.response[1].id").value(2))
+                .andExpect(jsonPath("$.response[1].name").value("Theatre B"));
     }
 
     @Test
@@ -82,49 +82,36 @@ public class TheatreControllerTest {
 
     @Test
     void getAllTheatres_ShouldReturnAllTheatres() throws Exception {
+        Long cityId = 1L;
         List<Theatre> theatres = new ArrayList<>();
         theatres.add(new Theatre(1L, "Theatre A", null, null));
         theatres.add(new Theatre(2L, "Theatre B", null, null));
 
-        when(theatreService.getAllTheatres()).thenReturn(theatres);
+        when(theatreService.getTheatresByCityId(cityId)).thenReturn(theatres);
 
-        mockMvc.perform(get("/api/v1/theatres"))
+        mockMvc.perform(get("/api/v1/cities/{cityId}/theatres", cityId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("Theatre A"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("Theatre B"));
-    }
-
-    @Test
-    void addTheatre_ValidTheatre_ShouldReturnCreated() throws Exception {
-        Theatre theatreToAdd = new Theatre(null, "New Theatre", null, null);
-        Theatre savedTheatre = new Theatre(1L, "New Theatre", null, null);
-
-        when(theatreService.addTheatre(any(Theatre.class))).thenReturn(savedTheatre);
-
-        mockMvc.perform(post("/api/v1/theatres")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(theatreToAdd)))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("New Theatre"));
+                .andExpect(jsonPath("$.response[0].id").value(1))
+                .andExpect(jsonPath("$.response[0].name").value("Theatre A"))
+                .andExpect(jsonPath("$.response[1].id").value(2))
+                .andExpect(jsonPath("$.response[1].name").value("Theatre B"));
     }
 
     @Test
     void getTheatreById_ValidTheatreId_ShouldReturnTheatre() throws Exception {
         Long theatreId = 1L;
+        Long cityId = 1L;
         Theatre theatre = new Theatre(theatreId, "Theatre A", null, null);
 
-        when(theatreService.getTheatreById(theatreId)).thenReturn(Optional.of(theatre));
+        when(theatreService.getTheatreByCityAndId(cityId, theatreId)).thenReturn(theatre);
 
-        mockMvc.perform(get("/api/v1/theatres/{id}", theatreId))
+        mockMvc.perform(get("/api/v1/cities/{cityId}/theatres/{id}", cityId, theatreId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Theatre A"));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.response.id").value(1))
+                .andExpect(jsonPath("$.response.name").value("Theatre A"));
     }
 
     // Helper method to convert object to JSON string

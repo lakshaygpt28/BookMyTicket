@@ -69,7 +69,7 @@ public class TheatreServiceTest {
         Theatre savedTheatre = TestData.getDummyTheatre();
 
         when(theatreRepository.save(any(Theatre.class))).thenReturn(savedTheatre);
-        when(cityService.getCityById(dummyCity.getId())).thenReturn(Optional.of(dummyCity));
+        when(cityService.getCityById(dummyCity.getId())).thenReturn(dummyCity);
         Theatre returnedTheatre = theatreService.addTheatre(newTheatre);
 
         verify(theatreRepository, times(1)).save(newTheatre);
@@ -81,7 +81,7 @@ public class TheatreServiceTest {
     public void addTheatresByCityId_ValidCityIdAndTheatres_ReturnsSavedTheatres() {
         List<Theatre> theatresToAdd = TestData.createTheatresForCity(dummyCity);
 
-        when(cityService.getCityById(dummyCity.getId())).thenReturn(Optional.of(dummyCity));
+        when(cityService.getCityById(dummyCity.getId())).thenReturn(dummyCity);
         when(theatreRepository.saveAll(anyList())).thenReturn(theatresToAdd);
 
         List<Theatre> savedTheatres = theatreService.addTheatresByCityId(dummyCity.getId(), theatresToAdd);
@@ -97,9 +97,9 @@ public class TheatreServiceTest {
         Theatre theatre = TestData.getDummyTheatre();
         when(theatreRepository.findById(1L)).thenReturn(Optional.of(theatre));
 
-        Optional<Theatre> retrievedTheatre = theatreService.getTheatreById(1L);
+        Theatre retrievedTheatre = theatreService.getTheatreById(1L);
 
         verify(theatreRepository, times(1)).findById(1L);
-        assertEquals(theatre.getName(), retrievedTheatre.get().getName());
+        assertEquals(theatre.getName(), retrievedTheatre.getName());
     }
 }

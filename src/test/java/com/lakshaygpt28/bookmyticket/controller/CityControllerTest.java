@@ -60,6 +60,18 @@ class CityControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void getCityById_ShouldReturnCity() throws Exception {
+        City city = new City(1L, "New York", null);
+        Long cityId = 1L;
+        when(cityService.getCityById(cityId)).thenReturn(city);
+
+        mockMvc.perform(get("/api/v1/cities/{cityId}", cityId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response.id").value(cityId));
+    }
+
     private String asJsonString(Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);

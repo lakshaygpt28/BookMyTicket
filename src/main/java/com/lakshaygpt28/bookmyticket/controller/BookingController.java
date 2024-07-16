@@ -1,8 +1,10 @@
 package com.lakshaygpt28.bookmyticket.controller;
 
+import com.lakshaygpt28.bookmyticket.dto.response.ApiResponse;
+import com.lakshaygpt28.bookmyticket.dto.response.BookingResponseDTO;
+import com.lakshaygpt28.bookmyticket.mapper.BookingMapper;
 import com.lakshaygpt28.bookmyticket.model.Booking;
-import com.lakshaygpt28.bookmyticket.model.Seat;
-import com.lakshaygpt28.bookmyticket.request.BookingRequest;
+import com.lakshaygpt28.bookmyticket.dto.request.BookingRequestDTO;
 import com.lakshaygpt28.bookmyticket.service.BookingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -26,19 +28,29 @@ public class BookingController {
 
 
     @PostMapping("/bookings")
-
-    public ResponseEntity<Booking> createBooking(@RequestBody @Valid BookingRequest bookingRequest) {
-        Long userId = bookingRequest.getUserId();
-        Long showId = bookingRequest.getShowId();
-        List<Long> seatIds = bookingRequest.getSeatIds();
+    public ResponseEntity<ApiResponse<BookingResponseDTO>> createBooking(@RequestBody @Valid BookingRequestDTO bookingRequestDTO) {
+        Long userId = bookingRequestDTO.getUserId();
+        Long showId = bookingRequestDTO.getShowId();
+        List<Long> seatIds = bookingRequestDTO.getSeatIds();
         Booking savedBooking = bookingService.createBooking(userId, showId, seatIds);
-        return new ResponseEntity<>(savedBooking, HttpStatus.CREATED);
+        BookingResponseDTO bookingResponseDTO = BookingMapper.INSTANCE.toDto(savedBooking);
+        ApiResponse<BookingResponseDTO> response = ApiResponse.<BookingResponseDTO>builder()
+                .success(true)
+                .message("Booking created successfully")
+                .response(bookingResponseDTO)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/bookings/{id}")
-    public ResponseEntity<Booking> getBookingById(@PathVariable Long id) {
-        Booking booking = bookingService.getBookingById(id)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + id));
-        return ResponseEntity.ok(booking);
+    public ResponseEntity<ApiResponse<BookingResponseDTO>> getBookingById(@PathVariable Long id) {
+        Booking booking = bookingService.getBookingById(id);
+        BookingResponseDTO bookingResponseDTO = BookingMapper.INSTANCE.toDto(booking);
+        ApiResponse<BookingResponseDTO> response = ApiResponse.<BookingResponseDTO>builder()
+                .success(true)
+                .message("Booking retrieved successfully")
+                .response(bookingResponseDTO)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }

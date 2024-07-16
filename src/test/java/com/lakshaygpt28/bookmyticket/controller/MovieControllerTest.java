@@ -65,11 +65,11 @@ class MovieControllerTest {
         mockMvc.perform(post("/api/v1/movies")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(newMovies)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].name").value("Interstellar"))
-                .andExpect(jsonPath("$[1].id").value(2L))
-                .andExpect(jsonPath("$[1].name").value("The Shawshank Redemption"));
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.response[0].id").value(1L))
+                .andExpect(jsonPath("$.response[0].name").value("Interstellar"))
+                .andExpect(jsonPath("$.response[1].id").value(2L))
+                .andExpect(jsonPath("$.response[1].name").value("The Shawshank Redemption"));
     }
 
     private String asJsonString(Object obj) {

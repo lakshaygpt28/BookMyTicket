@@ -1,8 +1,12 @@
 package com.lakshaygpt28.bookmyticket.controller;
 
-import com.lakshaygpt28.bookmyticket.request.PaymentRequest;
+import com.lakshaygpt28.bookmyticket.dto.request.PaymentRequestDTO;
+import com.lakshaygpt28.bookmyticket.dto.response.ApiResponse;
+import com.lakshaygpt28.bookmyticket.exception.PaymentProcessingException;
 import com.lakshaygpt28.bookmyticket.service.BookingService;
 import com.lakshaygpt28.bookmyticket.service.PaymentService;
+import com.lakshaygpt28.bookmyticket.util.ErrorMessages;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +28,17 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> processPayment(@RequestBody PaymentRequest paymentRequest) {
-        Boolean paymentSuccessful = paymentService.processPayment(paymentRequest);
-        Long bookingId = paymentRequest.getBookingId();
-        if (paymentSuccessful) {
-            return ResponseEntity.ok("Payment processed successfully. Tickets are booked for booking id: " + bookingId);
+    public ResponseEntity<ApiResponse<String>> processPayment(@RequestBody @Valid PaymentRequestDTO paymentRequestDTO) {
+        Boolean paymentSuccessful = paymentService.processPayment(paymentRequestDTO);
+        Long bookingId = paymentRequestDTO.getBookingId();
+
+        if (!paymentSuccessful) {
+            throw new PaymentProcessingException(String.format(ErrorMessages.PAYMENT_PROCESSING_ERROR, bookingId));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment failed booking id: " + bookingId);
+        ApiResponse<String> response = ApiResponse.<String>builder()
+                .success(true)
+                .message("Payment processed successfully. Tickets are booked for booking id: " + bookingId)
+                .build();
+        return  ResponseEntity.ok(response);
     }
 }

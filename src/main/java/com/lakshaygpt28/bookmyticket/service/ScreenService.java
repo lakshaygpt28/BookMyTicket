@@ -1,8 +1,10 @@
 package com.lakshaygpt28.bookmyticket.service;
 
+import com.lakshaygpt28.bookmyticket.exception.ScreenNotFoundException;
 import com.lakshaygpt28.bookmyticket.model.Screen;
 import com.lakshaygpt28.bookmyticket.model.Theatre;
 import com.lakshaygpt28.bookmyticket.repository.ScreenRepository;
+import com.lakshaygpt28.bookmyticket.util.ErrorMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +34,11 @@ public class ScreenService {
         return savedScreen;
     }
 
-    public Optional<Screen> getScreenById(Long id) {
+    public Screen getScreenById(Long id) {
         LOG.info("Fetching screen with id: {}", id);
-        Optional<Screen> screen = screenRepository.findById(id);
-
-        if (screen.isPresent()) {
-            LOG.info("Screen found: {}", screen.get().getId());
-        } else {
-            LOG.info("Screen not found with id: {}", id);
-        }
+        Screen screen = screenRepository.findById(id)
+                .orElseThrow(() -> new ScreenNotFoundException(String.format(ErrorMessages.SCREEN_NOT_FOUND, id)));
+        LOG.info("Screen fetched successfully: {}", screen.getId());
         return screen;
     }
 
@@ -53,34 +51,39 @@ public class ScreenService {
 
     public List<Screen> getScreensByTheatreId(Long theatreId) {
         LOG.info("Fetching screens for theatreId: {}", theatreId);
-        List<Screen> screens = screenRepository.findByTheatreId(theatreId);
+        Theatre theatre = theatreService.getTheatreById(theatreId);
+        List<Screen> screens = screenRepository.findByTheatreId(theatre.getId());
         LOG.info("Retrieved {} screens for theatreId: {}", screens.size(), theatreId);
         return screens;
     }
 
-
-    public void deleteScreen(Long id) {
-        LOG.info("Deleting screen with id: {}", id);
-        screenRepository.deleteById(id);
-        LOG.info("Screen deleted successfully: {}", id);
-    }
-
-    public Screen updateScreen(Long id, Screen screen) {
-        LOG.info("Updating screen with id: {}", id);
-        Screen updatedScreen = screenRepository.save(screen);
-        LOG.info("Screen updated successfully: {}", updatedScreen.getId());
-        return updatedScreen;
-    }
-
-    public List<Screen> addScreensByTheatreId(Long theatreId, List<Screen> screens) {
+    public List<Screen> addScreensByTheatreIdAndCityId(Long cityId, Long theatreId, List<Screen> screens) {
         LOG.info("Adding screens for theatreId: {}", theatreId);
-        Theatre theatre = theatreService.getTheatreById(theatreId).orElseThrow(
-                () -> new RuntimeException("Theatre not found with id: " + theatreId)
-        );
+        Theatre theatre = theatreService.getTheatreByCityAndId(cityId, theatreId);
         screens.forEach(screen -> screen.setTheatre(theatre));
         LOG.info("Theatre found. Saving screens for theatreId: {}", theatreId);
         List<Screen> savedScreens = screenRepository.saveAll(screens);
         LOG.info("Screens added successfully: {}", savedScreens.size());
         return savedScreens;
+    }
+
+    public List<Screen> getScreensByTheatreIdAndCityId(Long cityId, Long theatreId) {
+        LOG.info("Fetching screens for theatreId: {} and cityId: {}", theatreId, cityId);
+        Theatre theatre = theatreService.getTheatreByCityAndId(cityId, theatreId);
+        LOG.info("Theatre found for cityId: {}. Fetching screens for theatreId: {}", cityId, theatreId);
+        return getScreensByTheatreId(theatre.getId());
+    }
+
+    public Screen getScreenByIdAndTheatreIdAndCityId(Long cityId, Long theatreId, Long id) {
+        LOG.info("Fetching screen with id: {} for theatreId: {} and cityId: {}", id, theatreId, cityId);
+        Theatre theatre = theatreService.getTheatreByCityAndId(cityId, theatreId);
+        LOG.info("Theatre found for cityId: {}. Fetching screen with id: {} for theatreId: {}", cityId, id, theatreId);
+
+        Screen screen = screenRepository.findByTheatreIdAndId(theatre.getId(), id);
+        if (screen == null) {
+            throw new ScreenNotFoundException(String.format(ErrorMessages.SCREEN_NOT_FOUND, id));
+        }
+        LOG.info("Screen found: {}", screen.getId());
+        return screen;
     }
 }

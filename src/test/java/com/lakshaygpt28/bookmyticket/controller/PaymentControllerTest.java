@@ -1,6 +1,6 @@
 package com.lakshaygpt28.bookmyticket.controller;
 
-import com.lakshaygpt28.bookmyticket.request.PaymentRequest;
+import com.lakshaygpt28.bookmyticket.dto.request.PaymentRequestDTO;
 import com.lakshaygpt28.bookmyticket.service.PaymentService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +32,7 @@ class PaymentControllerTest {
     void processPayment_ValidRequest_ShouldReturnOk() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(paymentController).build();
 
-        when(paymentService.processPayment(any(PaymentRequest.class))).thenReturn(true);
+        when(paymentService.processPayment(any(PaymentRequestDTO.class))).thenReturn(true);
 
         mockMvc.perform(post("/api/v1/payments")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -86,18 +86,19 @@ public class ShowControllerTest {
     @Test
     void getShowsByTheatreId_ValidTheatreId_ShouldReturnShows() throws Exception {
         Long theatreId = 1L;
+        Long cityId = 1L;
         List<Show> shows = new ArrayList<>();
         shows.add(new Show(1L, null, null, null, null, null));
         shows.add(new Show(2L, null, null, null, null, null));
 
 
-        when(showService.getShowsByTheatreId(theatreId)).thenReturn(shows);
+        when(showService.getShowsByTheatreIdAndCityId(cityId, theatreId)).thenReturn(shows);
 
-        mockMvc.perform(get("/api/v1/theatres/{theatreId}/shows", theatreId))
+        mockMvc.perform(get("/api/v1/cities/{cityId}/theatres/{theatreId}/shows", cityId, theatreId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[1].id").value(2L));
+                .andExpect(jsonPath("$.response").isArray())
+                .andExpect(jsonPath("$.response[0].id").value(1L))
+                .andExpect(jsonPath("$.response[1].id").value(2L));
     }
 
     // Helper method to convert object to JSON string

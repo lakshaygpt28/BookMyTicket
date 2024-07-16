@@ -1,6 +1,7 @@
 package com.lakshaygpt28.bookmyticket.service;
 
 import com.lakshaygpt28.bookmyticket.TestData.TestData;
+import com.lakshaygpt28.bookmyticket.exception.CityNotFoundException;
 import com.lakshaygpt28.bookmyticket.model.City;
 import com.lakshaygpt28.bookmyticket.repository.CityRepository;
 import org.junit.jupiter.api.Test;
@@ -76,21 +77,19 @@ public class CityServiceTest {
         City city = TestData.getDummyCity1();
 
         when(cityRepository.findById(1L)).thenReturn(Optional.of(city));
-        Optional<City> optionalCity = cityService.getCityById(1L);
+        City optionalCity = cityService.getCityById(1L);
 
         verify(cityRepository, times(1)).findById(1L);
-        assertTrue(optionalCity.isPresent());
-        assertEquals(city.getName(), optionalCity.get().getName());
+        assertEquals(city.getName(), optionalCity.getName());
     }
 
     @Test
-    public void getCityById_NonExistingCityId_ReturnsEmptyOptional() {
+    public void getCityById_NonExistingCityId_ThrowsException() {
         Long nonExistingId = 999L;
 
         when(cityRepository.findById(nonExistingId)).thenReturn(Optional.empty());
-        Optional<City> optionalCity = cityService.getCityById(nonExistingId);
+        assertThrows(CityNotFoundException.class, () -> cityService.getCityById(nonExistingId));
 
         verify(cityRepository, times(1)).findById(nonExistingId);
-        assertTrue(optionalCity.isEmpty());
     }
 }

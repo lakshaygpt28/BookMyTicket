@@ -1,5 +1,8 @@
 package com.lakshaygpt28.bookmyticket.controller;
 
+import com.lakshaygpt28.bookmyticket.dto.ScreenDTO;
+import com.lakshaygpt28.bookmyticket.dto.response.ApiResponse;
+import com.lakshaygpt28.bookmyticket.mapper.ScreenMapper;
 import com.lakshaygpt28.bookmyticket.model.Screen;
 import com.lakshaygpt28.bookmyticket.service.ScreenService;
 import jakarta.validation.Valid;
@@ -32,34 +35,39 @@ public class ScreenController {
         return ResponseEntity.ok(screens);
     }
 
-    @PostMapping("/theatres/{theatreId}/screens")
-    public ResponseEntity<List<Screen>> addScreensByTheatreId(@PathVariable Long theatreId, @RequestBody @Valid List<Screen> screens) {
-        List<Screen> savedScreens = screenService.addScreensByTheatreId(theatreId, screens);
-        return new ResponseEntity<>(savedScreens, HttpStatus.CREATED);
+    @PostMapping("/cities/{cityId}/theatres/{theatreId}/screens")
+    public ResponseEntity<ApiResponse<List<ScreenDTO>>> addScreensByTheatreId(@PathVariable Long cityId, @PathVariable Long theatreId, @RequestBody @Valid List<Screen> screens) {
+        List<Screen> savedScreens = screenService.addScreensByTheatreIdAndCityId(cityId, theatreId, screens);
+        List<ScreenDTO> screenDTOs = savedScreens.stream().map(ScreenMapper.INSTANCE::toDto).toList();
+        ApiResponse<List<ScreenDTO>> response = ApiResponse.<List<ScreenDTO>>builder()
+                .success(true)
+                .message("Screens added successfully for theatreId: " + theatreId)
+                .response(screenDTOs)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/theatre/{theatreId}/screens")
-    public ResponseEntity<List<Screen>> getScreensByTheatreId(@PathVariable Long theatreId) {
-        List<Screen> screens = screenService.getScreensByTheatreId(theatreId);
-        return ResponseEntity.ok(screens);
+    @GetMapping("/cities/{cityId}/theatres/{theatreId}/screens")
+    public ResponseEntity<ApiResponse<List<ScreenDTO>>> getScreensByTheatreId(@PathVariable Long cityId, @PathVariable Long theatreId) {
+        List<Screen> screens = screenService.getScreensByTheatreIdAndCityId(cityId, theatreId);
+        List<ScreenDTO> screenDTOs = screens.stream().map(ScreenMapper.INSTANCE::toDto).toList();
+        ApiResponse<List<ScreenDTO>> response = ApiResponse.<List<ScreenDTO>>builder()
+                .success(true)
+                .message("Screens retrieved successfully for theatreId: " + theatreId)
+                .response(screenDTOs)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/screens/{id}")
-    public ResponseEntity<Screen> getScreenById(@PathVariable Long id) {
-        Screen screen = screenService.getScreenById(id)
-                .orElseThrow(() -> new RuntimeException("Screen not found"));
-        return ResponseEntity.ok(screen);
-    }
-
-    @DeleteMapping("/screens/{id}")
-    public ResponseEntity<Void> deleteScreen(@PathVariable Long id) {
-        screenService.deleteScreen(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/screens/{id}")
-    public ResponseEntity<Screen> updateScreen(@PathVariable Long id, @RequestBody Screen screen) {
-        Screen updatedScreen = screenService.updateScreen(id, screen);
-        return ResponseEntity.ok(updatedScreen);
+    @GetMapping("/cities/{cityId}/theatres/{theatreId}/screens/{id}")
+    public ResponseEntity<ApiResponse<ScreenDTO>> getScreenByIdAndTheatreIdAndCityId(@PathVariable Long cityId, @PathVariable Long theatreId, @PathVariable Long id) {
+        Screen screen = screenService.getScreenByIdAndTheatreIdAndCityId(cityId, theatreId, id);
+        ScreenDTO screenDTO = ScreenMapper.INSTANCE.toDto(screen);
+        ApiResponse<ScreenDTO> response = ApiResponse.<ScreenDTO>builder()
+                .success(true)
+                .message("Screen retrieved successfully")
+                .response(screenDTO)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }

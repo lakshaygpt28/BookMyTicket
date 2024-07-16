@@ -81,15 +81,16 @@ public class ShowServiceTest {
     @Test
     public void getShowsByTheatreId_ExistingTheatreId_ReturnsShows() {
         Long theatreId = dummyScreen.getTheatre().getId();
+        Long cityId = dummyScreen.getTheatre().getCity().getId();
         List<Screen> screens = new ArrayList<>();
         screens.add(dummyScreen);
 
-        when(screenService.getScreensByTheatreId(theatreId)).thenReturn(screens);
+        when(screenService.getScreensByTheatreIdAndCityId(cityId, theatreId)).thenReturn(screens);
         when(showRepository.findByScreenId(dummyScreen.getId())).thenReturn(dummyShows);
 
-        List<Show> result = showService.getShowsByTheatreId(theatreId);
+        List<Show> result = showService.getShowsByTheatreIdAndCityId(cityId, theatreId);
 
-        verify(screenService, times(1)).getScreensByTheatreId(theatreId);
+        verify(screenService, times(1)).getScreensByTheatreIdAndCityId(cityId, theatreId);
         verify(showRepository, times(1)).findByScreenId(dummyScreen.getId());
         assertEquals(dummyShows.size(), result.size());
     }

@@ -1,7 +1,9 @@
 package com.lakshaygpt28.bookmyticket.service;
 
+import com.lakshaygpt28.bookmyticket.exception.BookingNotFoundException;
 import com.lakshaygpt28.bookmyticket.model.*;
 import com.lakshaygpt28.bookmyticket.repository.BookingRepository;
+import com.lakshaygpt28.bookmyticket.util.ErrorMessages;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -87,16 +89,11 @@ public class BookingService {
         return booking;
     }
 
-    public Optional<Booking> getBookingById(Long id) {
+    public Booking getBookingById(Long id) {
         LOG.info("Fetching booking with id: {}", id);
-        Optional<Booking> booking = bookingRepository.findById(id);
-
-        if (booking.isPresent()) {
-            LOG.info("Booking found: {}", booking.get().getId());
-        } else {
-            LOG.info("Booking not found with id: {}", id);
-        }
-
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException(String.format(ErrorMessages.BOOKING_NOT_FOUND, id)));
+        LOG.info("Successfully fetched booking with id: {}", id);
         return booking;
     }
 

@@ -82,7 +82,7 @@ public class SeatServiceTest {
         List<Seat> newSeats = SeatTestData.dummySeats();
         List<Seat> savedSeats = SeatTestData.dummySeats();
         savedSeats.forEach(seat -> seat.setId(1L));
-        when(screenService.getScreenById(screenId)).thenReturn(Optional.of(screen));
+        when(screenService.getScreenById(screenId)).thenReturn(screen);
         when(seatRepository.saveAll(anyList())).thenReturn(savedSeats);
 
         List<Seat> returnedSeats = seatService.addSeatsByScreenId(screenId, newSeats);

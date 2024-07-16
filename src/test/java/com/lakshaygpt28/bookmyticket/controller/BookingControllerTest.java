@@ -18,6 +18,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,10 +63,10 @@ class BookingControllerTest {
         Long bookingId = 1L;
         Booking booking = new Booking();
         booking.setId(bookingId);
-        when(bookingService.getBookingById(bookingId)).thenReturn(Optional.of(booking));
+        when(bookingService.getBookingById(bookingId)).thenReturn(booking);
         mockMvc.perform(get("/api/v1/bookings/{bookingId}", bookingId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(bookingId));
+                .andExpect(jsonPath("$.response.bookingId").value(bookingId));
     }
 }
